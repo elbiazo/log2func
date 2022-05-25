@@ -4,7 +4,7 @@ import sys
 import argparse
 import pickle
 from pathlib import Path
-
+import os
 
 def handle_hlil_call(bv, target_func, instr, func_index) -> str:
     if isinstance(instr, HighLevelILCall):
@@ -90,10 +90,11 @@ if __name__ == "__main__":
     elif args.program:
         output_dict = log2func(args.program, args.func_name, args.func_index)
         if args.output_path:
-            with open(f"{args.output_path}/{f.name}.pkl", "wb") as fp:
+            _, prog_name = os.path.split(args.program)
+            with open(f"{args.output_path}/{prog_name}.pkl", "wb") as fp:
                 pickle.dump(output_dict, fp, 2)
         else:
-            with open(f"{f.name}.pkl", "wb") as fp:
+            with open(f"{args.program}.pkl", "wb") as fp:
                 pickle.dump(output_dict, fp, 2)
     else:
         print("No program or folder specified")
