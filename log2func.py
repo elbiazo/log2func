@@ -63,8 +63,6 @@ def log2func(bv, func_name: str, func_index: int) -> dict:
     return output_dict
 
 
-def binja_log2func(bv):
-    print(len(log2func(bv, "debug_printf", 2)))
 
 
 if __name__ == "__main__":
@@ -105,5 +103,4 @@ if __name__ == "__main__":
                 pickle.dump(output_dict, fp, 2)
     else:
         print("No program or folder specified")
-
 
