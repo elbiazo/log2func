@@ -63,8 +63,6 @@ def log2func(bv, func_name: str, func_index: int) -> dict:
     return output_dict
 
 
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert log to function")
 
@@ -103,4 +101,3 @@ if __name__ == "__main__":
                 pickle.dump(output_dict, fp, 2)
     else:
         print("No program or folder specified")
-
