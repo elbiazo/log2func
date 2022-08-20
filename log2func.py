@@ -25,42 +25,43 @@ def handle_hlil_call(bv, target_func, instr, func_index) -> str:
                             return func_name.value
 
 
-def log2func(bv, func_name: str, func_index: int) -> dict:
+def log2func(program_name: str, func_name: str, func_index: int) -> dict:
 
     output_dict = {}
-    if bv is None:
+    if program_name is None:
         print(f"Could not open view for {program}")
         return output_dict
 
-    funcs = bv.get_functions_by_name(func_name)
+    with open_view(program_name) as bv:
+        funcs = bv.get_functions_by_name(func_name)
 
-    if len(funcs) == 0:
-        print(f"Could not find function {func_name}")
-        return output_dict
+        if len(funcs) == 0:
+            print(f"Could not find function {func_name}")
+            return output_dict
 
-    target_func = funcs[0]
+        target_func = funcs[0]
 
-    print(f"Found function {func_name} @ {hex(target_func.start)}")
+        print(f"Found function {func_name} @ {hex(target_func.start)}")
 
-    caller_funcs = list(set(target_func.callers))
+        caller_funcs = list(set(target_func.callers))
 
-    for func in caller_funcs:
-        for bb in func.hlil:
-            for instr in bb:
-                # Check if it is call
-                if isinstance(instr, HighLevelILCall):
-                    func_name = handle_hlil_call(bv, target_func, instr, func_index)
-                    if func_name is not None:
-                        output_dict[func.start] = func_name
-                # Unwrap assign
-                elif isinstance(instr, HighLevelILAssign):
-                    if isinstance(instr.src, HighLevelILCall):
-                        func_name = handle_hlil_call(
-                            bv, target_func, instr.src, func_index
-                        )
+        for func in caller_funcs:
+            for bb in func.hlil:
+                for instr in bb:
+                    # Check if it is call
+                    if isinstance(instr, HighLevelILCall):
+                        func_name = handle_hlil_call(bv, target_func, instr, func_index)
                         if func_name is not None:
                             output_dict[func.start] = func_name
-    return output_dict
+                    # Unwrap assign
+                    elif isinstance(instr, HighLevelILAssign):
+                        if isinstance(instr.src, HighLevelILCall):
+                            func_name = handle_hlil_call(
+                                bv, target_func, instr.src, func_index
+                            )
+                            if func_name is not None:
+                                output_dict[func.start] = func_name
+        return output_dict
 
 
 if __name__ == "__main__":
