@@ -14,6 +14,8 @@ from ghidra.program.model.symbol import *
 
 
 def get_vn_data(vn):
+    if not vn:
+        return None
     copyPcode = vn.getDef()
     if copyPcode == None:
         return None
@@ -32,9 +34,8 @@ def get_vn_data(vn):
     func_name = getDataAt(func_addr)
     if not func_name:
         return None
-    
-    return func_name
 
+    return func_name
 
 
 def isTargetFunction(vn, funcName):
@@ -69,7 +70,7 @@ def get_func_name(currentProgram, curFunction):
     pcodeOps = highFunction.getPcodeOps()
 
     while pcodeOps.hasNext():
-        pcodeElem = pcodeOps.next();
+        pcodeElem = pcodeOps.next()
         opcode = pcodeElem.getOpcode()
 
         if opcode != PcodeOp.CALL and opcode != PcodeOp.CALLIND:
@@ -80,17 +81,12 @@ def get_func_name(currentProgram, curFunction):
             funcName = get_vn_data(pcodeElem.getInput(3))
             if funcName:
                 return funcName.getValue()
-        
-
 
 
 # def log2func(log_name, func_name_indexc):
-
-
 if __name__ == '__main__':
 
     cur_func = getFunctionContaining(currentAddress)
 
     func_name = get_func_name(currentProgram, cur_func)
     cur_func.setName(func_name, ghidra.program.model.symbol.SourceType.DEFAULT)
-
